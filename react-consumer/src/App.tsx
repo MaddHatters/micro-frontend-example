@@ -1,6 +1,7 @@
 import React from "react";
-import ReactDOM from "react-dom";
+import { createRoot } from 'react-dom/client';
 
+import "remixicon/fonts/remixicon.css";
 import "./index.scss";
 
 // TODO: Lazy load/async load components from react to svelte
@@ -11,9 +12,13 @@ import SafeComponent from "./SafeComponent";
 const App = () => (
   <div className="text-3xl mx-auto max-w-6xl">
 	<SafeComponent>
-	<Header />
+		<Header />
 	</SafeComponent>
 		React Consumer
 	<Footer />
   </div>
 );
+
+
+const root = createRoot(document.getElementById("app"));
+root.render(<App />);

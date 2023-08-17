@@ -1,5 +1,7 @@
 
 <script>
+	import Content from './Content';
+
   // TODO: Lazy load/async load components from react to svelte
   import CreateHeader from 'home_remote/CreateHeader';
 
@@ -13,5 +15,5 @@
 
 <div class="text-3xl mx-auto max-w-6xl">
 	<header id="header"></header>
-	Svelte Consumer
+	<Content />
 </div>

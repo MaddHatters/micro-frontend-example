@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 
-import { ProductController } from './product.controller';
+import { ProductsController } from './product.controller';
 
 @Module({
-  controllers: [ProductController],
+  controllers: [ProductsController],
 })
-export class UnauthorizedModule {}
+export class ProductsModule {}

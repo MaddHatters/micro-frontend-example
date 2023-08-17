@@ -8,5 +8,3 @@ import MainLayout from "home/MainLayout";
 
 const root = createRoot(document.getElementById("app"));
 root.render(<MainLayout />);
-
-

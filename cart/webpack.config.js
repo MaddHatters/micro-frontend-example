@@ -2,9 +2,9 @@ const HtmlWebPackPlugin = require("html-webpack-plugin");
 const ModuleFederationPlugin = require("webpack/lib/container/ModuleFederationPlugin");
 
 const deps = require("./package.json").dependencies;
-module.exports = (_, argv) => ({
+module.exports = {
   output: {
-    publicPath: "http://localhost:3002/",
+    publicPath: "http://localhost:3004/",
   },
 
   resolve: {
@@ -12,7 +12,7 @@ module.exports = (_, argv) => ({
   },
 
   devServer: {
-    port: 3002,
+    port: 3004,
     historyApiFallback: true,
   },
 
@@ -41,14 +41,19 @@ module.exports = (_, argv) => ({
 
   plugins: [
     new ModuleFederationPlugin({
-      name: "react_consumer",
+      name: "cart",
       filename: "remoteEntry.js",
       remotes: {
-		home_remote: "home@http://localhost:3000/remoteEntry.js"
-	  },
+        home: "home@http://localhost:3000/remoteEntry.js",
+        pdp: "pdp@http://localhost:3001/remoteEntry.js",
+        cart: "cart@http://localhost:3004/remoteEntry.js",
+      },
       exposes: {
-		"./": "./src/Header.tsx",
-	  },
+        "./cart": "./src/cart.js",
+        "./Login": "./src/Login.jsx",
+        "./MiniCart": "./src/MiniCart.jsx",
+        "./CartContent": "./src/CartContent.jsx",
+      },
       shared: {
         ...deps,
         react: {
@@ -65,4 +70,4 @@ module.exports = (_, argv) => ({
       template: "./src/index.html",
     }),
   ],
-});
+};

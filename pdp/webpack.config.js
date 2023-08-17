@@ -1,27 +1,14 @@
 const HtmlWebPackPlugin = require("html-webpack-plugin");
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const ModuleFederationPlugin = require("webpack/lib/container/ModuleFederationPlugin");
-const path = require("path");
-
-const mode = process.env.NODE_ENV || "development";
-const prod = mode === "production";
 
 const deps = require("./package.json").dependencies;
-module.exports = (_, argv) => ({
+module.exports = {
   output: {
     publicPath: "http://localhost:3001/",
   },
 
   resolve: {
     extensions: [".tsx", ".ts", ".jsx", ".js", ".json"],
-  },
-
-  resolve: {
-    alias: {
-      svelte: path.resolve("node_modules", "svelte"),
-    },
-    extensions: [".mjs", ".js", ".ts", ".svelte"],
-    mainFields: ["svelte", "browser", "module", "main"],
   },
 
   devServer: {
@@ -32,17 +19,7 @@ module.exports = (_, argv) => ({
   module: {
     rules: [
       {
-        test: /\.svelte$/,
-        use: {
-          loader: "svelte-loader",
-          options: {
-            emitCss: true,
-            hotReload: true,
-          },
-        },
-      },
-      {
-        test: /\.(m?js|ts)/,
+        test: /\.m?js/,
         type: "javascript/auto",
         resolve: {
           fullySpecified: false,
@@ -51,13 +28,6 @@ module.exports = (_, argv) => ({
       {
         test: /\.(css|s[ac]ss)$/i,
         use: ["style-loader", "css-loader", "postcss-loader"],
-      },
-      {
-        test: /\.css$/,
-        use: [
-          prod ? MiniCssExtractPlugin.loader : "style-loader",
-          "css-loader",
-        ],
       },
       {
         test: /\.(ts|tsx|js|jsx)$/,
@@ -69,32 +39,33 @@ module.exports = (_, argv) => ({
     ],
   },
 
-  mode,
-
   plugins: [
     new ModuleFederationPlugin({
       name: "pdp",
       filename: "remoteEntry.js",
       remotes: {
-		home_remote: "home@http://localhost:3000/remoteEntry.js"
-	  },
+        home: "home@http://localhost:3000/remoteEntry.js",
+        pdp: "pdp@http://localhost:3001/remoteEntry.js",
+        cart: "cart@http://localhost:3004/remoteEntry.js",
+		addtocart: "addtocart@http://localhost:3005/remoteEntry.js"
+      },
       exposes: {
-
-	  },
+        "./PDPContent": "./src/PDPContent.jsx",
+      },
       shared: {
         ...deps,
-        "solid-js": {
+        react: {
           singleton: true,
-          requiredVersion: deps["solid-js"],
+          requiredVersion: deps.react,
+        },
+        "react-dom": {
+          singleton: true,
+          requiredVersion: deps["react-dom"],
         },
       },
-    }),
-    new MiniCssExtractPlugin({
-      filename: "[name].css",
     }),
     new HtmlWebPackPlugin({
       template: "./src/index.html",
     }),
   ],
-  devtool: prod ? false : "source-map",
-});
+};
